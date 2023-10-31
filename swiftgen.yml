@@ -1,0 +1,15 @@
+xcassets:
+  inputs:
+    - SocketChatting/Resource/Assets/Assets.xcassets
+  outputs:
+    - templateName: swift5
+      params:
+        forceProvidesNamespaces: true
+      output: SocketChatting/Resource/SwiftGen/Assets.swift
+
+fonts:
+  inputs:
+    - SocketChatting/Resource/Font
+  outputs:
+    - templateName: swift5
+      output: SocketChatting/Resource/SwiftGen/Fonts.swift
