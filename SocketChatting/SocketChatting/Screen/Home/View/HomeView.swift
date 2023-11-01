@@ -25,8 +25,32 @@ class HomeView: BaseView {
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 5.0
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
-//        layout.itemSize = CGSize(width: 40, height: 40)
         return layout
+    }()
+    
+    let myProfileView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        view.layer.cornerRadius = 20
+        view.layer.borderWidth = 3
+        view.layer.borderColor = Asset.Color.lightGrayClear.color.cgColor
+        return view
+    }()
+    
+    let myProfileImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.layer.cornerRadius = 30
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
+    
+    let myNicknameLabel: UILabel = {
+        let label = UILabel()
+        label.font = FontFamily.Pretendard.regular.font(size: 15)
+        label.textAlignment = .left
+        label.textColor = .black
+        label.text = "나의 닉네임이다"
+        return label
     }()
     
     let tableView: UITableView = {
@@ -56,7 +80,11 @@ class HomeView: BaseView {
     }
     
     override func initSubviews() {
-        addSubviews([navigationView, colletionView, tableView])
+        addSubviews([navigationView, 
+                     colletionView,
+                     myProfileView,
+                     tableView])
+        myProfileView.addSubviews([myProfileImageView, myNicknameLabel])
     }
     
     override func initConstraints() {
@@ -70,11 +98,33 @@ class HomeView: BaseView {
             make.top.equalTo(navigationView.snp.bottom).offset(20)
             make.left.equalTo(snp.left).offset(15)
             make.right.equalTo(snp.right)
-            make.bottom.equalTo(tableView.snp.top).offset(-20)
             make.height.equalTo(100)
         }
         
+        myProfileView.snp.makeConstraints { make in
+            make.top.equalTo(colletionView.snp.bottom).offset(20)
+            make.left.equalTo(snp.left).offset(20)
+            make.right.equalTo(snp.right).offset(-20)
+        }
+        
+        myProfileImageView.snp.makeConstraints { make in
+            make.top.equalTo(myProfileView.snp.top).offset(20)
+            make.left.equalTo(myProfileView.snp.left).offset(20)
+            make.bottom.equalTo(myProfileView.snp.bottom).offset(-20)
+            make.width.equalTo(60)
+            make.height.equalTo(60)
+        }
+        
+        myNicknameLabel.snp.makeConstraints { make in
+            make.top.equalTo(myProfileView.snp.top).offset(10)
+            make.left.equalTo(myProfileImageView.snp.right).offset(20)
+            make.right.equalTo(myProfileView.snp.right).offset(-10)
+            make.bottom.equalTo(myProfileView.snp.bottom).offset(-10)
+
+        }
+        
         tableView.snp.makeConstraints { make in
+            make.top.equalTo(myProfileView.snp.bottom).offset(20)
             make.left.equalTo(snp.left).offset(10)
             make.right.equalTo(snp.right).offset(-10)
             make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)

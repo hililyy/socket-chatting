@@ -20,7 +20,7 @@ final class NavigationView: BaseView {
     
     let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = FontFamily.Pretendard.regular.font(size: 22)
+        label.font = FontFamily.Pretendard.regular.font(size: 18)
         label.textColor = .black
         label.textAlignment = .center
         return label

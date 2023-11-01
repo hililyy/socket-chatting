@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class HomeVC: BaseVC {
     let homeView = HomeView()
@@ -16,10 +17,23 @@ class HomeVC: BaseVC {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         homeView.tableView.delegate = self
         homeView.tableView.dataSource = self
         homeView.colletionView.delegate = self
         homeView.colletionView.dataSource = self
+        
+        initUI()
+    }
+    
+    func initUI() {
+        FirebaseManager.instance.getProfileImage { url in
+            self.homeView.myProfileImageView.kf.setImage(with: url)
+        }
+        
+        FirebaseManager.instance.getNickname { nickname in
+            self.homeView.myNicknameLabel.text = nickname
+        }
     }
 }
 

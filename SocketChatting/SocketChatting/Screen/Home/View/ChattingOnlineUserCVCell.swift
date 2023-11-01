@@ -26,7 +26,7 @@ class ChattingOnlineUserCVCell: BaseCVCell {
     let onlineColorView: UIView = {
         let view = UIView()
         view.backgroundColor = Asset.Color.green.color
-        view.layer.cornerRadius = 5
+        view.layer.cornerRadius = 8
         view.layer.borderWidth = 3
         view.layer.borderColor = UIColor.white.cgColor
         return view
@@ -50,8 +50,8 @@ class ChattingOnlineUserCVCell: BaseCVCell {
         onlineColorView.snp.makeConstraints { make in
             make.right.equalTo(profileImageView.snp.right).offset(-5)
             make.bottom.equalTo(profileImageView.snp.bottom).offset(-5)
-            make.width.equalTo(10)
-            make.height.equalTo(10)
+            make.width.equalTo(16)
+            make.height.equalTo(16)
         }
         
         nicknameLabel.snp.makeConstraints { make in
