@@ -1,13 +1,15 @@
 //
-//  FirebaseAuthManager.swift
+//  FirebaseManager.swift
 //  KakoBank
 //
 //  Created by 강조은 on 2023/10/11.
 //
 
+import UIKit
 import Firebase
 import FirebaseAuth
 import FirebaseDatabase
+import FirebaseStorage
 
 class FirebaseManager {
     private init() {}
@@ -81,21 +83,56 @@ class FirebaseManager {
         return Auth.auth().currentUser?.uid ?? ""
     }
     
-    func saveNickname(nickname: String) {
+    func getNickname(completion: @escaping (String) -> Void) {
         let uid = getUID()
-        Database.database().reference().child(uid).child("detail").childByAutoId().setValue(nickname)
-    }
-    
-    func getNickname() {
-        let uid = getUID()
+        
         Database.database().reference().child(uid).child("nickname").observeSingleEvent(of: .value) { snapshot in
             for snap in snapshot.children.allObjects as! [DataSnapshot] {
-                print(snap)
-//                guard let data = AllDiaryData.Detail(JSON: snap.value as! [String:AnyObject]) else { return }
-//                MainModel.model.dateWithCircle.append(data.date ?? "")
-//                MainModel.model.detailKey.append(snap.key)
-//                MainModel.model.detailDiaryData.append(data)
+                let nickname = snap.value as? String
+                completion(nickname ?? "")
             }
+        }
+    }
+    
+    func getProfileImage(completion: @escaping (URL) -> Void) {
+        let uid = getUID()
+        
+        Database.database().reference().child(uid).child("profile").observeSingleEvent(of: .value) { snapshot in
+            let imageUrlString = snapshot.value as? String
+            guard let imageUrl = URL(string: imageUrlString ?? "") else { return }
+            completion(imageUrl)
+        }
+    }
+    
+    func saveNickNameAndProfileImage(nickname: String, image: UIImage, completion: @escaping (Bool) -> Void) {
+        let uid = getUID()
+        let image = image.jpegData(compressionQuality: 0.1)
+        
+        let imageRef = Storage.storage().reference().child("profile").child(uid)
+        
+        imageRef.putData(image!, metadata: nil) { data, error in
+            imageRef.downloadURL { url, error in
+                guard let downloadURL = url else { return }
+                Database.database().reference()
+                    .child(uid)
+                    .setValue(["nickname": nickname,
+                               "profile": downloadURL.absoluteString]) { err, ref in
+                        completion(err == nil)
+                    }
+            }
+        }
+    }
+    
+    func getProfileImage(urlString: String, completion: @escaping (UIImage?) -> Void) {
+        let storageReference = Storage.storage().reference(forURL: urlString)
+        let megaByte = Int64(1 * 1024 * 1024)
+        
+        storageReference.getData(maxSize: megaByte) { data, error in
+            guard let imageData = data else {
+                completion(nil)
+                return
+            }
+            completion(UIImage(data: imageData))
         }
     }
 }
