@@ -9,7 +9,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-class LoginVC: BaseVC {
+final class LoginVC: BaseVC {
     let loginView = LoginView()
     
     override func loadView() {
@@ -32,6 +32,14 @@ class LoginVC: BaseVC {
                 guard let self else { return }
                 let vc = SignupVC()
                 navigationController?.pushViewController(vc, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        loginView.loginButton.rx.tap
+            .asDriver()
+            .drive(onNext: { [weak self] _ in
+                guard let self else { return }
+                registHomeToRoot()
             })
             .disposed(by: disposeBag)
     }

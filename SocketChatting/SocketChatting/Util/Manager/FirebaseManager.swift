@@ -7,14 +7,18 @@
 
 import Firebase
 import FirebaseAuth
+import FirebaseDatabase
 
-class FirebaseAuthManager {
+class FirebaseManager {
     private init() {}
     
-    private static var _instance: FirebaseAuthManager?
+    private static var _instance: FirebaseManager?
     
-    public static var instance: FirebaseAuthManager? {
-        return _instance ?? FirebaseAuthManager()
+    public static var instance: FirebaseManager {
+        if _instance == nil {
+            _instance = FirebaseManager()
+        }
+        return _instance!
     }
     
     func signup(info: SignupModel, completion: @escaping (String?) -> Void) {
@@ -71,5 +75,27 @@ class FirebaseAuthManager {
     
     func getCurrentUserEmail() -> String {
         return Auth.auth().currentUser?.email ?? ""
+    }
+    
+    func getUID() -> String {
+        return Auth.auth().currentUser?.uid ?? ""
+    }
+    
+    func saveNickname(nickname: String) {
+        let uid = getUID()
+        Database.database().reference().child(uid).child("detail").childByAutoId().setValue(nickname)
+    }
+    
+    func getNickname() {
+        let uid = getUID()
+        Database.database().reference().child(uid).child("nickname").observeSingleEvent(of: .value) { snapshot in
+            for snap in snapshot.children.allObjects as! [DataSnapshot] {
+                print(snap)
+//                guard let data = AllDiaryData.Detail(JSON: snap.value as! [String:AnyObject]) else { return }
+//                MainModel.model.dateWithCircle.append(data.date ?? "")
+//                MainModel.model.detailKey.append(snap.key)
+//                MainModel.model.detailDiaryData.append(data)
+            }
+        }
     }
 }
