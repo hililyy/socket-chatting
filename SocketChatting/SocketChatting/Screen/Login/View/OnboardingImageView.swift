@@ -7,17 +7,14 @@
 
 import UIKit
 
-class OnboardingImageView: BaseView {
+final class OnboardingImageView: BaseView {
     let navigationView = NavigationView()
     
     let profileImageButton : UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(systemName: "photo.badge.plus"), for: .normal)
-        button.imageView?.image = UIImage(systemName: "photo.badge.plus")
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(named: "icAddPhoto"), for: .normal)
         button.imageView?.tintColor = .black
         button.imageView?.contentMode = .scaleAspectFill
-        button.imageView?.layer.cornerRadius = 80
-        button.backgroundColor = .white
         return button
     }()
     
@@ -32,6 +29,11 @@ class OnboardingImageView: BaseView {
     }()
     
     let loading = UIActivityIndicatorView()
+    
+    func applyImage(img: UIImage) {
+        profileImageButton.setImage(img, for: .normal)
+        profileImageButton.imageView?.layer.cornerRadius = 80
+    }
     
     override func initUI() {
         navigationView.setTitleLabelText(title: "프로필 사진 등록")

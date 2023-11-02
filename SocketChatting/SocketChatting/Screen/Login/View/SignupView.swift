@@ -163,6 +163,7 @@ final class SignupView: BaseView {
         passwordMessageLabel.snp.makeConstraints { make in
             make.top.equalTo(rePasswordTextField.snp.bottom).offset(10)
             make.left.equalTo(rePasswordTextField.snp.left).offset(15)
+            make.height.equalTo(30)
         }
         
         signupButton.snp.makeConstraints { make in

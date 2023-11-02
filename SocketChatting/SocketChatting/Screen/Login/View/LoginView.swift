@@ -11,7 +11,7 @@ import SnapKit
 class LoginView: BaseView {
     let logoImageView: UIImageView = {
        let imageView = UIImageView()
-        imageView.backgroundColor = .gray
+        imageView.image = UIImage(named: "rabbit")
         return imageView
     }()
     
@@ -23,6 +23,7 @@ class LoginView: BaseView {
         textField.font = FontFamily.Pretendard.medium.font(size: 15)
         textField.addLeftPadding()
         textField.clearButtonMode = .whileEditing
+        textField.text = "aa@aa.aa"
         return textField
     }()
     
@@ -34,6 +35,7 @@ class LoginView: BaseView {
         textField.font = FontFamily.Pretendard.medium.font(size: 15)
         textField.addLeftPadding()
         textField.isSecureTextEntry = true
+        textField.text = "aaaa111"
         return textField
     }()
     
@@ -55,6 +57,8 @@ class LoginView: BaseView {
         return button
     }()
     
+    let loading = UIActivityIndicatorView()
+    
     override func initUI() {
         backgroundColor = Asset.Color.mainYellow.color
     }
@@ -64,7 +68,8 @@ class LoginView: BaseView {
                      emailTextField,
                      passwordTextField,
                      loginButton,
-                     signupButton
+                     signupButton,
+                     loading
                     ])
     }
     
@@ -100,6 +105,13 @@ class LoginView: BaseView {
         signupButton.snp.makeConstraints { make in
             make.top.equalTo(loginButton.snp.bottom).offset(10)
             make.centerX.equalTo(snp.centerX)
+        }
+        
+        loading.snp.makeConstraints { make in
+            make.centerX.equalTo(snp.centerX)
+            make.centerY.equalTo(snp.centerY)
+            make.width.equalTo(100)
+            make.height.equalTo(100)
         }
     }
 }

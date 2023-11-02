@@ -43,8 +43,8 @@ class FirebaseManager {
         }
     }
 
-    func login(email: String, pw: String, completion: @escaping (String?) -> Void) {
-        Auth.auth().signIn(withEmail: email, password: pw) { _, error in
+    func login(info: SignupModel, completion: @escaping (String?) -> Void) {
+        Auth.auth().signIn(withEmail: info.email, password: info.password) { _, error in
             if let error = error {
                 let code = (error as NSError).code
                 switch code {
@@ -83,38 +83,42 @@ class FirebaseManager {
         return Auth.auth().currentUser?.uid ?? ""
     }
     
-    func getNickname(completion: @escaping (String) -> Void) {
-        let uid = getUID()
+    func getNickname(newEmail: String = "", completion: @escaping (String) -> Void) {
+//        let uid = getUID()
         
-        Database.database().reference().child(uid).child("nickname").observeSingleEvent(of: .value) { snapshot in
-            for snap in snapshot.children.allObjects as! [DataSnapshot] {
-                let nickname = snap.value as? String
-                completion(nickname ?? "")
-            }
+        let id = newEmail.isEmpty ? CommonManager.instance.newEmail : newEmail
+//        print("firebase nickname!!!!: \(id)")
+        
+        Database.database().reference().child(id).child("nickname").observeSingleEvent(of: .value) { snapshot in
+            let nickname = snapshot.value as? String
+            completion(nickname ?? "")
         }
     }
     
-    func getProfileImage(completion: @escaping (URL) -> Void) {
-        let uid = getUID()
-        
-        Database.database().reference().child(uid).child("profile").observeSingleEvent(of: .value) { snapshot in
+    func getProfileImage(newEmail: String = "", completion: @escaping (URL) -> Void) {
+//        let uid = getUID()
+        let id = newEmail.isEmpty ? CommonManager.instance.newEmail : newEmail
+//        print("firebase profile!!!!: \(id)")
+        Database.database().reference().child(id).child("profile").observeSingleEvent(of: .value) { snapshot in
             let imageUrlString = snapshot.value as? String
             guard let imageUrl = URL(string: imageUrlString ?? "") else { return }
             completion(imageUrl)
         }
     }
     
-    func saveNickNameAndProfileImage(nickname: String, image: UIImage, completion: @escaping (Bool) -> Void) {
-        let uid = getUID()
+    func saveNickNameAndProfileImage(socketId: String, nickname: String, image: UIImage, completion: @escaping (Bool) -> Void) {
+//        let uid = getUID()
+        
+        let newEmail = CommonManager.instance.newEmail
         let image = image.jpegData(compressionQuality: 0.1)
         
-        let imageRef = Storage.storage().reference().child("profile").child(uid)
+        let imageRef = Storage.storage().reference().child("profile").child(newEmail)
         
         imageRef.putData(image!, metadata: nil) { data, error in
             imageRef.downloadURL { url, error in
                 guard let downloadURL = url else { return }
                 Database.database().reference()
-                    .child(uid)
+                    .child(newEmail)
                     .setValue(["nickname": nickname,
                                "profile": downloadURL.absoluteString]) { err, ref in
                         completion(err == nil)

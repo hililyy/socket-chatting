@@ -9,7 +9,7 @@ import Foundation
 
 final class OnboardingNameVC: BaseVC {
     let onboardingNameView = OnboardingNameView()
-    let viewModel = SignupViewModel()
+    var viewModel: SignupViewModel?
     
     override func loadView() {
         view = onboardingNameView
@@ -35,7 +35,7 @@ final class OnboardingNameVC: BaseVC {
             .drive(onNext: { [weak self] _ in
                 guard let self else { return }
                 
-                viewModel.nickname = self.onboardingNameView.nicknameTextField.text ?? ""
+                viewModel?.nickname = self.onboardingNameView.nicknameTextField.text ?? ""
                 
                 let vc = OnboardingImageVC()
                 vc.viewModel = self.viewModel

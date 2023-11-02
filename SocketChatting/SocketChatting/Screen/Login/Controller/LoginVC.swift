@@ -18,6 +18,7 @@ final class LoginVC: BaseVC {
     }
     
     override func viewDidLoad() {
+        super.viewDidLoad()
         initalize()
     }
     
@@ -39,8 +40,41 @@ final class LoginVC: BaseVC {
             .asDriver()
             .drive(onNext: { [weak self] _ in
                 guard let self else { return }
-                registHomeToRoot()
+                self.loginView.loading.startAnimating()
+                login()
+                
             })
             .disposed(by: disposeBag)
+    }
+    
+    private func login() {
+        guard let info = getLoginTextData() else { return }
+        
+        FirebaseManager.instance.login(info: info) { message in
+            self.loginView.loading.stopAnimating()
+            if let message {
+                self.presentConfirmVC(message: message)
+            } else {
+                CommonManager.instance.newEmail = info.email.components(separatedBy: ["@","."]).joined()
+                self.registHomeToRoot()
+            }
+        }
+    }
+    
+    private func getLoginTextData() -> SignupModel? {
+        guard let email = loginView.emailTextField.text,
+              let password = loginView.passwordTextField.text else { return nil }
+        
+        return SignupModel(email: email,
+                           password: password)
+    }
+    
+    private func presentConfirmVC(message: String) {
+        let vc = ConfirmVC()
+        vc.modalTransitionStyle = .crossDissolve
+        vc.modalPresentationStyle = .overCurrentContext
+        vc.initUIText(messageText: message,
+                      buttonText: "확인")
+        self.present(vc, animated: true)
     }
 }

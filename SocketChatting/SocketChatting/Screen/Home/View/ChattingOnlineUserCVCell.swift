@@ -12,6 +12,7 @@ class ChattingOnlineUserCVCell: BaseCVCell {
         let image = UIImageView()
         image.backgroundColor = .yellow
         image.layer.cornerRadius = 30
+        image.clipsToBounds = true
         return image
     }()
     
@@ -32,6 +33,10 @@ class ChattingOnlineUserCVCell: BaseCVCell {
         return view
     }()
     
+    func setIsOnlineColor(isConnected: Bool) {
+        onlineColorView.backgroundColor = isConnected ? Asset.Color.green.color : .red
+    }
+    
     override func initSubviews() {
         contentView.addSubviews([profileImageView, nicknameLabel])
         profileImageView.addSubview(onlineColorView)
@@ -48,15 +53,15 @@ class ChattingOnlineUserCVCell: BaseCVCell {
         }
         
         onlineColorView.snp.makeConstraints { make in
-            make.right.equalTo(profileImageView.snp.right).offset(-5)
-            make.bottom.equalTo(profileImageView.snp.bottom).offset(-5)
+            make.right.equalTo(profileImageView.snp.right).offset(-3)
+            make.bottom.equalTo(profileImageView.snp.bottom).offset(-3)
             make.width.equalTo(16)
             make.height.equalTo(16)
         }
         
         nicknameLabel.snp.makeConstraints { make in
-            make.left.equalTo(contentView.snp.left).offset(8)
-            make.right.equalTo(contentView.snp.right).offset(-8)
+            make.left.equalTo(contentView.snp.left).offset(5)
+            make.right.equalTo(contentView.snp.right).offset(-5)
             make.bottom.equalTo(contentView.snp.bottom)
         }
     }

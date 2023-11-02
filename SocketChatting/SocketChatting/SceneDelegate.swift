@@ -19,9 +19,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.window = window
     }
     
+    func sceneWillEnterForeground(_ scene: UIScene) {
+        SocketIOManager.instance.establishConnection()
+
+    }
+    
     func changeRootViewController(_ vc: UIViewController, animated: Bool = true) {
         guard let window = self.window else { return }
         window.rootViewController = vc
     }
 }
-

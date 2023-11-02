@@ -17,6 +17,7 @@ class HomeView: BaseView {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.flowLayout)
         collectionView.backgroundColor = .clear
         collectionView.register(ChattingOnlineUserCVCell.self, forCellWithReuseIdentifier: "ChattingOnlineUserCVCell")
+        collectionView.showsHorizontalScrollIndicator = false
         return collectionView
     }()
     
@@ -41,6 +42,7 @@ class HomeView: BaseView {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = 30
         imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         return imageView
     }()
     
@@ -49,7 +51,6 @@ class HomeView: BaseView {
         label.font = FontFamily.Pretendard.regular.font(size: 15)
         label.textAlignment = .left
         label.textColor = .black
-        label.text = "나의 닉네임이다"
         return label
     }()
     

@@ -8,6 +8,7 @@
 import UIKit
 
 class SignupViewModel {
-    var nickname = ""
-    var profileImage = UIImage()
+    var email: String?
+    var nickname: String?
+    var profileImage: UIImage?
 }

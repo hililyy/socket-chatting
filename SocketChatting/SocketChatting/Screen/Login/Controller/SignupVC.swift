@@ -9,6 +9,7 @@ import UIKit
 
 final class SignupVC: BaseVC {
     private let signupView = SignupView()
+    let viewModel = SignupViewModel()
     
     override func loadView() {
         super.loadView()
@@ -21,7 +22,7 @@ final class SignupVC: BaseVC {
     }
 
     private func signup() {
-        guard let info = getSignupData() else { return }
+        guard let info = getSignupTextData() else { return }
         
         FirebaseManager.instance.signup(info: info) { message in
             self.presentConfirmVC(message: message)
@@ -29,7 +30,7 @@ final class SignupVC: BaseVC {
         }
     }
     
-    private func getSignupData() -> SignupModel? {
+    private func getSignupTextData() -> SignupModel? {
         guard let email = signupView.emailTextField.text,
               let password = signupView.passwordTextField.text else { return nil }
         
@@ -52,7 +53,24 @@ final class SignupVC: BaseVC {
         
         if message == nil {
             vc.confirmButtonTapHandler = {
+                self.viewModel.email = self.signupView.emailTextField.text
+                
+                SocketIOManager.instance.connectToServerWithNickname(nickname: self.signupView.emailTextField.text ?? "") { userList in
+                    
+                    for user in userList {
+                        if user["nickname"] as? String == self.signupView.emailTextField.text {
+                            CommonManager.instance.socketId = user["socketId"] as? String ?? ""
+                            CommonManager.instance.email = self.signupView.emailTextField.text ?? ""
+                            let str = self.signupView.emailTextField.text ?? ""
+                            CommonManager.instance.newEmail = str.components(separatedBy: ["@","."]).joined()
+                            print(CommonManager.instance.newEmail)
+                            return
+                        }
+                    }
+                }
+                
                 let vc = OnboardingNameVC()
+                vc.viewModel = self.viewModel
                 self.navigationController?.pushViewController(vc, animated: true)
             }
         }

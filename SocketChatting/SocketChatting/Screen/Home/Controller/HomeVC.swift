@@ -10,6 +10,7 @@ import Kingfisher
 
 class HomeVC: BaseVC {
     let homeView = HomeView()
+    let viewModel = HomeViewModel()
     
     override func loadView() {
         view = homeView
@@ -18,22 +19,44 @@ class HomeVC: BaseVC {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        initDelegate()
+        initUI()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            self.homeView.colletionView.reloadData()
+        }
+    }
+    
+    func initUI() {
+        self.viewModel.connectServer {
+            
+            FirebaseManager.instance.getProfileImage { url in
+                print("url:\(url)")
+                self.homeView.myProfileImageView.setImage(url: url) { image in
+                    self.viewModel.myInfo.profileImageURL = url
+                }
+                FirebaseManager.instance.getNickname { nickname in
+                    self.homeView.myNicknameLabel.text = nickname
+                    self.viewModel.myInfo.nickname = nickname
+                    
+                    self.viewModel.getAllNickname {
+                        self.viewModel.getAllProfileImage {
+                            self.homeView.colletionView.reloadData()
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func initDelegate() {
         homeView.tableView.delegate = self
         homeView.tableView.dataSource = self
         homeView.colletionView.delegate = self
         homeView.colletionView.dataSource = self
-        
-        initUI()
-    }
-    
-    func initUI() {
-        FirebaseManager.instance.getProfileImage { url in
-            self.homeView.myProfileImageView.kf.setImage(with: url)
-        }
-        
-        FirebaseManager.instance.getNickname { nickname in
-            self.homeView.myNicknameLabel.text = nickname
-        }
     }
 }
 
@@ -53,13 +76,16 @@ extension HomeVC: UITableViewDelegate, UITableViewDataSource {
 
 extension HomeVC: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return self.viewModel.onlineUsers.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = homeView.colletionView.dequeueReusableCell(withReuseIdentifier: "ChattingOnlineUserCVCell", for: indexPath) as? ChattingOnlineUserCVCell else { return UICollectionViewCell() }
-        
-        cell.nicknameLabel.text = "닉네이이임"
+        cell.nicknameLabel.text = viewModel.onlineUsers[indexPath.row].nickname
+        if let url = viewModel.onlineUsers[indexPath.row].profileImageURL {
+            cell.profileImageView.setImage(url: url, completion: {_ in })
+        }
+        cell.setIsOnlineColor(isConnected: viewModel.onlineUsers[indexPath.row].isConnected ?? false)
         return cell
     }
 }

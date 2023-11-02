@@ -1,4 +1,4 @@
-vari app = require('express')();
+var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
@@ -20,14 +20,14 @@ http.listen(3000, function(){
 
 // socket 연결 (클라이언트 -> 서버)
 io.on('connection', function(clientSocket){
-  console.log('a user connected');
+  console.log('new user connected');
 
   clientSocket.on('disconnect', function(){
     console.log('user disconnected');
 
     var clientNickname;
     for (var i = 0; i < userList.length; i++) {
-      if (userList[i]["id"] == clientSocket.id) {
+      if (userList[i]["socketId"] == clientSocket.id) {
         userList[i]["isConnected"] = false;
         clientNickname = userList[i]["nickname"];
         break;
@@ -46,7 +46,7 @@ io.on('connection', function(clientSocket){
 // 유저 채팅방에서 삭제 (클라이언트 -> 서버)
   clientSocket.on("exitUser", function(clientNickname) {
     for (var i = 0; i < userList.length; i++) {
-      if (userList[i]["id"] == clientSocket.id) {
+      if (userList[i]["socketId"] == clientSocket.id) {
         userList.splice(i, 1);
         break;
       }
@@ -76,7 +76,7 @@ io.on('connection', function(clientSocket){
       for (var i = 0; i < userList.length; i++) {
         if (userList[i]["nickname"] == clientNickname) {
           userList[i]["isConnected"] = true
-          userList[i]["id"] = clientSocket.id;
+          userList[i]["socketId"] = clientSocket.id;
           userInfo = userList[i];
           foundUser = true;
           break;
@@ -84,7 +84,7 @@ io.on('connection', function(clientSocket){
       }
 
       if (!foundUser) {
-        userInfo["id"] = clientSocket.id;
+        userInfo["socketId"] = clientSocket.id;
         userInfo["nickname"] = clientNickname;
         userInfo["isConnected"] = true
         userList.push(userInfo);

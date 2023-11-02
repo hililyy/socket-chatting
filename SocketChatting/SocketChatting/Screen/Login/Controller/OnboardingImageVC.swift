@@ -40,8 +40,9 @@ final class OnboardingImageVC: BaseVC {
                 guard let self else { return }
                 
                 onboardingImageView.loading.startAnimating()
-                FirebaseManager.instance.saveNickNameAndProfileImage(nickname: viewModel?.nickname ?? "",
-                                                                     image: self.viewModel?.profileImage ?? .icBack,
+                FirebaseManager.instance.saveNickNameAndProfileImage(socketId: CommonManager.instance.socketId ,
+                                                                     nickname: viewModel?.nickname ?? "",
+                                                                     image: viewModel?.profileImage ?? .icBack,
                                                                      completion: { result in
                     
                     if result {
@@ -69,7 +70,7 @@ final class OnboardingImageVC: BaseVC {
         vc.modalPresentationStyle = .overCurrentContext
         vc.initUIText(messageText: message ?? "에러러렁어어어어어!!!!!!!",
                       buttonText: "확인")
-        self.present(vc, animated: true)
+        present(vc, animated: true)
     }
     
     private func openPhotoLibrary() {
@@ -110,7 +111,7 @@ final class OnboardingImageVC: BaseVC {
 extension OnboardingImageVC: UIImagePickerControllerDelegate,UINavigationControllerDelegate {
     func imagePickerController( _ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            onboardingImageView.profileImageButton.setImage(image, for: .normal)
+            onboardingImageView.applyImage(img: image)
             viewModel?.profileImage = image
         }
         
