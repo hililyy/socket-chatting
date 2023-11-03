@@ -40,8 +40,7 @@ final class OnboardingImageVC: BaseVC {
                 guard let self else { return }
                 
                 onboardingImageView.loading.startAnimating()
-                FirebaseManager.instance.saveNickNameAndProfileImage(socketId: CommonManager.instance.socketId ,
-                                                                     nickname: viewModel?.nickname ?? "",
+                FirebaseManager.instance.saveNickNameAndProfileImage(nickname: viewModel?.nickname ?? "",
                                                                      image: viewModel?.profileImage ?? .icBack,
                                                                      completion: { result in
                     

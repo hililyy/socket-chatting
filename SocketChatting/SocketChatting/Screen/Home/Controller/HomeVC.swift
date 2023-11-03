@@ -28,17 +28,15 @@ final class HomeVC: BaseVC {
     private func initUI() async throws {
         try await viewModel.connectServer()
         
-        let url = try await FirebaseManager.instance.getProfileImage()
+        let url = try await FirebaseManager.instance.getProfileImage(email: CommonManager.instance.email)
         homeView.myProfileImageView.setImage(url: url) { image in
             self.viewModel.myInfo.profileImageURL = url
         }
         
-        let nickname = try await FirebaseManager.instance.getNickname()
+        let nickname = try await FirebaseManager.instance.getNickname(email: CommonManager.instance.email)
         homeView.myNicknameLabel.text = nickname
-        self.viewModel.myInfo.nickname = nickname
-        
+        viewModel.myInfo.nickname = nickname
         try await viewModel.getAllNicknameAndImage()
-        
         homeView.colletionView.reloadData()
     }
     
@@ -47,6 +45,22 @@ final class HomeVC: BaseVC {
         homeView.tableView.dataSource = self
         homeView.colletionView.delegate = self
         homeView.colletionView.dataSource = self
+    }
+    
+    private func initTarget() {
+        homeView.navigationView.backButton.rx.tap
+            .asDriver()
+            .drive(onNext: {
+                SocketIOManager.instance.exitChatWithNickname(nickname: CommonManager.instance.email) {
+                    DispatchQueue.main.async {
+//                        self.users.removeAll()
+//                        self.tblUserList.isHidden = true
+//                        self.askForNickname()
+                    }
+                    self.popVC()
+                }
+            })
+            .disposed(by: disposeBag)
     }
 }
 

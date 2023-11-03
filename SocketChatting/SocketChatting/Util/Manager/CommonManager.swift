@@ -7,7 +7,7 @@
 
 import Foundation
 
-class CommonManager {
+final class CommonManager {
     private init() {}
     
     private static var _instance: CommonManager?
@@ -19,7 +19,5 @@ class CommonManager {
         return _instance!
     }
     
-    var socketId: String = ""
     var email: String = ""
-    var newEmail: String = ""
 }

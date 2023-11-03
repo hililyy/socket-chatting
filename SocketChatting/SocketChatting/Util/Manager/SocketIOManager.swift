@@ -13,7 +13,8 @@ class SocketIOManager: NSObject {
     static let instance = SocketIOManager()
     
     //서버에서 메시지를 주고받을 수 있게 해주는 Socket.IO의 기본 클래스
-    var manager = SocketManager(socketURL: URL(string: "http://192.168.50.63:3000")!, config: [.log(true) , .compress])
+    var manager = SocketManager(socketURL: URL(string: "http://192.168.50.63:3000")!,
+                                config: [.log(true), .compress])
     var socket: SocketIOClient!
     
     //클라이언트 소캣 초기화
@@ -39,13 +40,11 @@ class SocketIOManager: NSObject {
     //MARK: 유저 채팅방에 연결
     func connectToServerWithNickname(nickname:String,
                                      completeHandler: @escaping ([[String:AnyObject]]) -> Void) {
-        print("111")
         //서버에 유저 아이디 전송
         socket.emit("connectUser", nickname)
-        print("222")
         //서버에서 송신한 데이터 받기
         socket.on("userList") { dataArray, ack in
-            print("d: \(dataArray)")
+            print("dataArray: \(dataArray)")
             completeHandler(dataArray[0] as! [[String:AnyObject]])
         }
         

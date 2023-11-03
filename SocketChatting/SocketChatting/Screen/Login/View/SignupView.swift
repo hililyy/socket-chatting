@@ -10,24 +10,7 @@ import RxSwift
 import RxCocoa
 
 final class SignupView: BaseView {
-    private let navigationView: UIView = {
-        let view = UIView()
-        return view
-    }()
-    
-    let backButton: UIButton = {
-        let button = UIButton()
-        button.setImage(Asset.Image.icBack.image, for: .normal)
-        return button
-    }()
-    
-    private let navigationTitleLabel: UILabel = {
-        let label = UILabel()
-        label.initLabelUI(text: "회원가입",
-                          color: .black,
-                          font: FontFamily.Pretendard.medium.font(size: 18))
-        return label
-    }()
+    let navigationView = NavigationView()
     
     let emailTextField: UITextField = {
         let textField = UITextField()
@@ -86,6 +69,7 @@ final class SignupView: BaseView {
     
     override func initUI() {
         backgroundColor = Asset.Color.mainYellow.color
+        navigationView.setTitleLabelText(title: "회원가입")
     }
     
     override func initTarget() {
@@ -105,18 +89,12 @@ final class SignupView: BaseView {
     override func initSubviews() {
         addSubview(navigationView)
         
-        navigationView.addSubviews([
-            backButton,
-            navigationTitleLabel
-        ])
-        
         addSubviews([emailTextField,
                      passwordTextField,
                      rePasswordTextField,
                      passwordMessageLabel,
                      signupButton,
-                     loading
-                    ])
+                     loading])
     }
     
     override func initConstraints() {
@@ -124,19 +102,6 @@ final class SignupView: BaseView {
             make.top.equalTo(safeAreaLayoutGuide.snp.top)
             make.left.equalTo(snp.left)
             make.right.equalTo(snp.right)
-            make.height.equalTo(80)
-        }
-        
-        backButton.snp.makeConstraints { make in
-            make.left.equalTo(navigationView.snp.left).offset(24)
-            make.centerY.equalTo(navigationView.snp.centerY)
-            make.width.equalTo(24)
-            make.height.equalTo(24)
-        }
-        
-        navigationTitleLabel.snp.makeConstraints { make in
-            make.centerX.equalTo(navigationView.snp.centerX)
-            make.centerY.equalTo(navigationView.snp.centerY)
         }
         
         emailTextField.snp.makeConstraints { make in

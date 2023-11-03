@@ -53,28 +53,16 @@ final class SignupVC: BaseVC {
         
         if message == nil {
             vc.confirmButtonTapHandler = {
-                self.viewModel.email = self.signupView.emailTextField.text
-                
-                SocketIOManager.instance.connectToServerWithNickname(nickname: self.signupView.emailTextField.text ?? "") { userList in
-                    
-                    for user in userList {
-                        if user["nickname"] as? String == self.signupView.emailTextField.text {
-                            CommonManager.instance.socketId = user["socketId"] as? String ?? ""
-                            CommonManager.instance.email = self.signupView.emailTextField.text ?? ""
-                            let str = self.signupView.emailTextField.text ?? ""
-                            CommonManager.instance.newEmail = str.components(separatedBy: ["@","."]).joined()
-                            print(CommonManager.instance.newEmail)
-                            return
-                        }
-                    }
-                }
+                let emailText = self.signupView.emailTextField.text ?? ""
+                self.viewModel.email = emailText
+                CommonManager.instance.email = emailText
                 
                 let vc = OnboardingNameVC()
                 vc.viewModel = self.viewModel
                 self.navigationController?.pushViewController(vc, animated: true)
             }
         }
-        self.present(vc, animated: true)
+        present(vc, animated: true)
     }
 }
 
@@ -98,12 +86,12 @@ extension SignupVC {
             })
             .disposed(by: disposeBag)
         
-        signupView.backButton.rx.tap
+        signupView.navigationView.backButton.rx.tap
             .asDriver()
             .drive(onNext: { [weak self] _ in
                 guard let self else { return }
                 
-                dismissVC()
+                popVC()
             })
             .disposed(by: disposeBag)
     }

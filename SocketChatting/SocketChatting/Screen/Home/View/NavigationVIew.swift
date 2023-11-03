@@ -26,6 +26,8 @@ final class NavigationView: BaseView {
         return label
     }()
     
+    let rightBarButton = UIButton(type: .custom)
+    
     // MARK: - Functions
     
     func setTitleLabelText(title: String) {
@@ -36,7 +38,8 @@ final class NavigationView: BaseView {
     
     override func initSubviews() {
         addSubviews([backButton,
-                     titleLabel])
+                     titleLabel,
+                     rightBarButton])
     }
     
     override func initConstraints() {
@@ -53,6 +56,14 @@ final class NavigationView: BaseView {
             make.centerX.equalTo(snp.centerX)
             make.bottom.equalTo(snp.bottom)
             make.height.equalTo(30)
+        }
+        
+        rightBarButton.snp.makeConstraints { make in
+            make.right.equalTo(snp.right).offset(-5)
+            make.left.equalTo(titleLabel.snp.right).offset(20)
+            make.width.equalTo(44)
+            make.height.equalTo(44)
+            make.centerY.equalTo(titleLabel.snp.centerY)
         }
     }
 }

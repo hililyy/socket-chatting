@@ -40,9 +40,8 @@ final class LoginVC: BaseVC {
             .asDriver()
             .drive(onNext: { [weak self] _ in
                 guard let self else { return }
-                self.loginView.loading.startAnimating()
+                loginView.loading.startAnimating()
                 login()
-                
             })
             .disposed(by: disposeBag)
     }
@@ -50,13 +49,15 @@ final class LoginVC: BaseVC {
     private func login() {
         guard let info = getLoginTextData() else { return }
         
-        FirebaseManager.instance.login(info: info) { message in
-            self.loginView.loading.stopAnimating()
+        FirebaseManager.instance.login(info: info) { [weak self] message in
+            guard let self else { return }
+            loginView.loading.stopAnimating()
+            
             if let message {
-                self.presentConfirmVC(message: message)
+                presentConfirmVC(message: message)
             } else {
-                CommonManager.instance.newEmail = info.email.components(separatedBy: ["@","."]).joined()
-                self.registHomeToRoot()
+                CommonManager.instance.email = info.email.components(separatedBy: ["@","."]).joined()
+                registHomeToRoot()
             }
         }
     }
@@ -75,6 +76,6 @@ final class LoginVC: BaseVC {
         vc.modalPresentationStyle = .overCurrentContext
         vc.initUIText(messageText: message,
                       buttonText: "확인")
-        self.present(vc, animated: true)
+        present(vc, animated: true)
     }
 }

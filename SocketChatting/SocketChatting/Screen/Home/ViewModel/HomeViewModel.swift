@@ -16,9 +16,6 @@ final class HomeViewModel {
             self.onlineUsers = []
             
             for user in userList {
-                if user["nickname"] as? String == CommonManager.instance.email {
-                    CommonManager.instance.socketId = user["socketId"] as? String ?? ""
-                }
                 if user["nickname"] as? String == "" { continue }
                 
                 self.onlineUsers.append(UserModel(email: user["nickname"] as? String,
@@ -31,9 +28,9 @@ final class HomeViewModel {
     
     func getAllNicknameAndImage() async throws {
         for (i, user) in onlineUsers.enumerated() {
-            let email = user.email?.components(separatedBy: ["@", "."]).joined() ?? ""
-            let url = try await FirebaseManager.instance.getProfileImage(newEmail: email)
-            let nickname = try await FirebaseManager.instance.getNickname(newEmail: email)
+            let url = try await FirebaseManager.instance.getProfileImage(email: user.email ?? "")
+            let nickname = try await FirebaseManager.instance.getNickname(email: user.email ?? "")
+            
             self.onlineUsers[i].profileImageURL = url
             self.onlineUsers[i].nickname = nickname
         }

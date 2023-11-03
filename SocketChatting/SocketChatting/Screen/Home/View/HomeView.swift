@@ -65,7 +65,14 @@ class HomeView: BaseView {
     
     override func initUI() {
         backgroundColor = .white
-        navigationView.backButton.isHidden = true
+        navigationView.backButton.setImage(nil, for: .normal)
+        navigationView.backButton.initButtonUI(text: "나가기",
+                                               font: FontFamily.Pretendard.regular.font(size: 14),
+                                               color: Asset.Color.gray1.color)
+        navigationView.backButton.backgroundColor = Asset.Color.lightGrayClear.color
+        navigationView.backButton.layer.cornerRadius = 10
+        navigationView.rightBarButton.setImage(UIImage(systemName: "plus"), for: .normal)
+        navigationView.rightBarButton.tintColor = .black
         setNavigationTitle(title: "채팅방 목록")
     }
     

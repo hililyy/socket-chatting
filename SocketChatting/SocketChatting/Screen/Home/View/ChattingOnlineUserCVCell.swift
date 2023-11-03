@@ -10,7 +10,7 @@ import UIKit
 class ChattingOnlineUserCVCell: BaseCVCell {
     let profileImageView: UIImageView = {
         let image = UIImageView()
-        image.backgroundColor = .yellow
+        image.contentMode = .scaleAspectFill
         image.layer.cornerRadius = 30
         image.clipsToBounds = true
         return image

@@ -83,16 +83,16 @@ final class FirebaseManager {
         return Auth.auth().currentUser?.uid ?? ""
     }
     
-    func getNickname(newEmail: String = "") async throws -> String {
-        let key = newEmail.isEmpty ? CommonManager.instance.newEmail : newEmail
+    func getNickname(email: String) async throws -> String {
+        let key = email.components(separatedBy: ["@", "."]).joined()
         
         let (snapshot, _ ) = await Database.database().reference().child(key).child("nickname").observeSingleEventAndPreviousSiblingKey(of: .value)
         guard let nickname = snapshot.value as? String else { throw ErrorCase.invalidString }
         return nickname
     }
     
-    func getProfileImage(newEmail: String = "") async throws -> URL {
-        let key = newEmail.isEmpty ? CommonManager.instance.newEmail : newEmail
+    func getProfileImage(email: String) async throws -> URL {
+        let key = email.components(separatedBy: ["@", "."]).joined()
         
         let (snapshot, _ ) = await Database.database().reference().child(key).child("profile").observeSingleEventAndPreviousSiblingKey(of: .value)
         let imageUrlString = snapshot.value as? String
@@ -100,17 +100,16 @@ final class FirebaseManager {
         return imageUrl
     }
     
-    func saveNickNameAndProfileImage(socketId: String, nickname: String, image: UIImage, completion: @escaping (Bool) -> Void) {
-        
-        let newEmail = CommonManager.instance.newEmail
+    func saveNickNameAndProfileImage(nickname: String, image: UIImage, completion: @escaping (Bool) -> Void) {
+        let pKey = CommonManager.instance.email.components(separatedBy: ["@", "."]).joined()
         let image = image.jpegData(compressionQuality: 0.1)
-        let imageRef = Storage.storage().reference().child("profile").child(newEmail)
+        let imageRef = Storage.storage().reference().child("profile").child(pKey)
         
         imageRef.putData(image!, metadata: nil) { data, error in
             imageRef.downloadURL { url, error in
                 guard let downloadURL = url else { return }
                 Database.database().reference()
-                    .child(newEmail)
+                    .child(pKey)
                     .setValue(["nickname": nickname,
                                "profile": downloadURL.absoluteString]) { err, ref in
                         completion(err == nil)
