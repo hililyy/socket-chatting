@@ -38,8 +38,7 @@ class ChattingOnlineUserCVCell: BaseCVCell {
     }
     
     override func initSubviews() {
-        contentView.addSubviews([profileImageView, nicknameLabel])
-        profileImageView.addSubview(onlineColorView)
+        contentView.addSubviews([profileImageView, nicknameLabel, onlineColorView])
     }
     
     override func initConstraints() {
@@ -53,8 +52,8 @@ class ChattingOnlineUserCVCell: BaseCVCell {
         }
         
         onlineColorView.snp.makeConstraints { make in
-            make.right.equalTo(profileImageView.snp.right).offset(-3)
-            make.bottom.equalTo(profileImageView.snp.bottom).offset(-3)
+            make.right.equalTo(profileImageView.snp.right).offset(0)
+            make.bottom.equalTo(profileImageView.snp.bottom).offset(0)
             make.width.equalTo(16)
             make.height.equalTo(16)
         }
