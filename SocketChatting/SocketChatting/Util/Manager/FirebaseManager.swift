@@ -11,7 +11,7 @@ import FirebaseAuth
 import FirebaseDatabase
 import FirebaseStorage
 
-class FirebaseManager {
+final class FirebaseManager {
     private init() {}
     
     private static var _instance: FirebaseManager?
@@ -83,35 +83,27 @@ class FirebaseManager {
         return Auth.auth().currentUser?.uid ?? ""
     }
     
-    func getNickname(newEmail: String = "", completion: @escaping (String) -> Void) {
-//        let uid = getUID()
+    func getNickname(newEmail: String = "") async throws -> String {
+        let key = newEmail.isEmpty ? CommonManager.instance.newEmail : newEmail
         
-        let id = newEmail.isEmpty ? CommonManager.instance.newEmail : newEmail
-//        print("firebase nickname!!!!: \(id)")
-        
-        Database.database().reference().child(id).child("nickname").observeSingleEvent(of: .value) { snapshot in
-            let nickname = snapshot.value as? String
-            completion(nickname ?? "")
-        }
+        let (snapshot, _ ) = await Database.database().reference().child(key).child("nickname").observeSingleEventAndPreviousSiblingKey(of: .value)
+        guard let nickname = snapshot.value as? String else { throw ErrorCase.invalidString }
+        return nickname
     }
     
-    func getProfileImage(newEmail: String = "", completion: @escaping (URL) -> Void) {
-//        let uid = getUID()
-        let id = newEmail.isEmpty ? CommonManager.instance.newEmail : newEmail
-//        print("firebase profile!!!!: \(id)")
-        Database.database().reference().child(id).child("profile").observeSingleEvent(of: .value) { snapshot in
-            let imageUrlString = snapshot.value as? String
-            guard let imageUrl = URL(string: imageUrlString ?? "") else { return }
-            completion(imageUrl)
-        }
+    func getProfileImage(newEmail: String = "") async throws -> URL {
+        let key = newEmail.isEmpty ? CommonManager.instance.newEmail : newEmail
+        
+        let (snapshot, _ ) = await Database.database().reference().child(key).child("profile").observeSingleEventAndPreviousSiblingKey(of: .value)
+        let imageUrlString = snapshot.value as? String
+        guard let imageUrl = URL(string: imageUrlString ?? "") else { throw ErrorCase.invalidURL }
+        return imageUrl
     }
     
     func saveNickNameAndProfileImage(socketId: String, nickname: String, image: UIImage, completion: @escaping (Bool) -> Void) {
-//        let uid = getUID()
         
         let newEmail = CommonManager.instance.newEmail
         let image = image.jpegData(compressionQuality: 0.1)
-        
         let imageRef = Storage.storage().reference().child("profile").child(newEmail)
         
         imageRef.putData(image!, metadata: nil) { data, error in

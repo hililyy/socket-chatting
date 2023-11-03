@@ -8,7 +8,7 @@
 import UIKit
 import Kingfisher
 
-class HomeVC: BaseVC {
+final class HomeVC: BaseVC {
     let homeView = HomeView()
     let viewModel = HomeViewModel()
     
@@ -20,39 +20,29 @@ class HomeVC: BaseVC {
         super.viewDidLoad()
         
         initDelegate()
-        initUI()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-            self.homeView.colletionView.reloadData()
+        Task {
+            try await initUI()
         }
     }
     
-    func initUI() {
-        self.viewModel.connectServer {
-            
-            FirebaseManager.instance.getProfileImage { url in
-                print("url:\(url)")
-                self.homeView.myProfileImageView.setImage(url: url) { image in
-                    self.viewModel.myInfo.profileImageURL = url
-                }
-                FirebaseManager.instance.getNickname { nickname in
-                    self.homeView.myNicknameLabel.text = nickname
-                    self.viewModel.myInfo.nickname = nickname
-                    
-                    self.viewModel.getAllNickname {
-                        self.viewModel.getAllProfileImage {
-                            self.homeView.colletionView.reloadData()
-                        }
-                    }
-                }
-            }
+    private func initUI() async throws {
+        try await viewModel.connectServer()
+        
+        let url = try await FirebaseManager.instance.getProfileImage()
+        homeView.myProfileImageView.setImage(url: url) { image in
+            self.viewModel.myInfo.profileImageURL = url
         }
+        
+        let nickname = try await FirebaseManager.instance.getNickname()
+        homeView.myNicknameLabel.text = nickname
+        self.viewModel.myInfo.nickname = nickname
+        
+        try await viewModel.getAllNicknameAndImage()
+        
+        homeView.colletionView.reloadData()
     }
     
-    func initDelegate() {
+    private func initDelegate() {
         homeView.tableView.delegate = self
         homeView.tableView.dataSource = self
         homeView.colletionView.delegate = self
