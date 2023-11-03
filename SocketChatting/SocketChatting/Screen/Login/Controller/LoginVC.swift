@@ -31,6 +31,7 @@ final class LoginVC: BaseVC {
             .asDriver()
             .drive(onNext: { [weak self] _ in
                 guard let self else { return }
+                
                 let vc = SignupVC()
                 navigationController?.pushViewController(vc, animated: true)
             })
@@ -40,6 +41,7 @@ final class LoginVC: BaseVC {
             .asDriver()
             .drive(onNext: { [weak self] _ in
                 guard let self else { return }
+                
                 loginView.loading.startAnimating()
                 login()
             })

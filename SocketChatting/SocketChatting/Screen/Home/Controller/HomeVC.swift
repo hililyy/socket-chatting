@@ -23,6 +23,7 @@ final class HomeVC: BaseVC {
         Task {
             try await initUI()
         }
+        initTarget()
     }
     
     private func initUI() async throws {
@@ -61,6 +62,21 @@ final class HomeVC: BaseVC {
                 }
             })
             .disposed(by: disposeBag)
+        
+        homeView.navigationView.rightBarButton.rx.tap
+            .asDriver()
+            .drive(onNext: {
+                print("!!")
+                let vc = TextFieldPopupVC()
+                vc.modalTransitionStyle = .crossDissolve
+                vc.modalPresentationStyle = .overFullScreen
+                vc.completeHandler = { roomTitle in
+                    
+                    
+                }
+                self.present(vc, animated: true)
+            })
+            .disposed(by: disposeBag)
     }
 }
 
@@ -73,7 +89,6 @@ extension HomeVC: UITableViewDelegate, UITableViewDataSource {
         guard let cell = homeView.tableView.dequeueReusableCell(withIdentifier: "ChattingRoomListTVCell", for: indexPath) as? ChattingRoomListTVCell else { return UITableViewCell() }
         
         cell.titleLabel.text = "제목"
-        cell.messageLabel.text = "메시지"
         return cell
     }
 }

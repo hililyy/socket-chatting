@@ -59,8 +59,8 @@ class SocketIOManager: NSObject {
     }
     
     //MARK: 메시지 발송
-    func sendMessage(message:String , withNickname nickname: String) {
-        socket.emit("chatMessage" , nickname, message)
+    func sendMessage(message:String ,nickname: String, roomId: String) {
+        socket.emit("chatMessage" , nickname, message, roomId)
     }
     
     func getChatMessage(completHandler: @escaping ([String: AnyObject]) -> Void) {
@@ -69,6 +69,7 @@ class SocketIOManager: NSObject {
             msgDictionary["nickname"] = dataArray[0] as! String as AnyObject
             msgDictionary["message"] = dataArray[1] as! String as AnyObject
             msgDictionary["date"] = dataArray[2] as! String as AnyObject
+            msgDictionary["roomId"] = dataArray[3] as! String as AnyObject
             
             completHandler(msgDictionary)
         }
