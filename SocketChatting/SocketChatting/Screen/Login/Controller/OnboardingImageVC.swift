@@ -41,7 +41,7 @@ final class OnboardingImageVC: BaseVC {
                 
                 onboardingImageView.loading.startAnimating()
                 FirebaseManager.instance.saveNickNameAndProfileImage(nickname: viewModel?.nickname ?? "",
-                                                                     image: viewModel?.profileImage ?? .icBack,
+                                                                     image: viewModel?.profileImage ?? .add,
                                                                      completion: { result in
                     
                     if result {
